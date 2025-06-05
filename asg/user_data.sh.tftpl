@@ -1,0 +1,22 @@
+#!/bin/bash
+set -eux
+
+# IPv4 を優先
+echo "precedence ::ffff:0:0/96  100" >> /etc/gai.conf
+
+# セカンダリ ENI を MAC アドレスで探して有効化
+for iface in $(ls /sys/class/net/ | grep -v lo); do
+  iface_mac=$(cat /sys/class/net/$${iface}/address)
+  if [[ "$$iface_mac" == "${secondary_eni_mac}" ]]; then
+    ip link set dev "$$iface" up
+    dhclient "$$iface"
+  fi
+done
+
+# パッケージ更新と NGINX のインストール
+dnf update -y
+dnf install -y nginx
+
+# NGINX の有効化 & 起動
+systemctl enable nginx
+systemctl start nginx

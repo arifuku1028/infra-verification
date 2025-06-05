@@ -1,0 +1,26 @@
+{
+  "name": "eni-failover",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc && cp package.json package-lock.json dist && cd dist && npm ci --omit=dev"
+  },
+  "volta": {
+    "node": "20.19.2",
+    "npm": "11.4.1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-auto-scaling": "^3.823.0",
+    "@aws-sdk/client-ec2": "^3.823.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.149",
+    "@types/node": "^22.15.29",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "prettier": "^3.5.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "typescript": "^5.8.3"
+  }
+}
