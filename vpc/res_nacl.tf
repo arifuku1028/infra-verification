@@ -7,16 +7,16 @@ resource "aws_network_acl" "this" {
 }
 
 resource "aws_network_acl_association" "public" {
-  for_each = aws_subnet.public
+  for_each = local.public_subnets
 
-  subnet_id      = each.value.id
+  subnet_id      = aws_subnet.public[each.key].id
   network_acl_id = aws_network_acl.this.id
 }
 
 resource "aws_network_acl_association" "private" {
-  for_each = aws_subnet.private
+  for_each = local.private_subnets
 
-  subnet_id      = each.value.id
+  subnet_id      = aws_subnet.private[each.key].id
   network_acl_id = aws_network_acl.this.id
 }
 

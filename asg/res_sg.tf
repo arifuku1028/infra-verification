@@ -1,4 +1,4 @@
-## Security Group
+## Security Group for AutoScaling Group
 resource "aws_security_group" "asg" {
   name        = "${local.prefix}-asg-sg"
   description = "Security group for AutoScaling Group instances"

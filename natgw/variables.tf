@@ -1,9 +1,7 @@
 locals {
   prefix = "arifuku-test"
-  use_azs = [
-    "ap-northeast-1a",
+  region = "ap-northeast-1"
+  azs_to_allocate = [
+    "c",
   ]
-  availability_zones = {
-    for az in local.use_azs : substr(az, -1, 1) => az
-  }
 }

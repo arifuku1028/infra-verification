@@ -1,15 +1,15 @@
 locals {
   prefix   = "arifuku-test"
-  vpc_cidr = "10.0.0.0/16"
-  azs = [
-    "ap-northeast-1a",
-    "ap-northeast-1c",
-    "ap-northeast-1d",
-  ]
-  availability_zones = {
-    for index, az in local.azs : substr(az, -1, 1) => {
-      name  = az
-      index = index
-    }
+  region   = "ap-northeast-1"
+  vpc_cidr = "172.18.0.0/16"
+  public_subnets = {
+    "a" = "172.18.0.0/26"
+    "c" = "172.18.0.64/26"
+    "d" = "172.18.0.128/26"
+  }
+  private_subnets = {
+    "a" = "172.18.12.0/26"
+    "c" = "172.18.12.64/26"
+    "d" = "172.18.12.128/26"
   }
 }

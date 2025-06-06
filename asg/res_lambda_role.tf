@@ -40,25 +40,28 @@ data "aws_iam_policy_document" "eni_failover" {
       "autoScaling:CompleteLifecycleAction",
     ]
     resources = [
-      aws_autoscaling_group.this.arn,
+      "arn:aws:autoscaling:${local.region}:${data.aws_caller_identity.current.account_id}:autoScalingGroup:*:autoScalingGroupName/${local.asg_name}",
     ]
   }
 
   statement {
     actions = [
-      "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
     ]
     resources = [
-      aws_cloudwatch_log_group.eni_failover.arn,
       "${aws_cloudwatch_log_group.eni_failover.arn}:*",
     ]
   }
 }
 
-resource "aws_iam_role_policy" "eni_failover" {
-  name   = "${local.prefix}-eni-failover-policy"
-  role   = aws_iam_role.eni_failover.id
-  policy = data.aws_iam_policy_document.eni_failover.json
+resource "aws_iam_policy" "eni_failover" {
+  name        = "${local.prefix}-eni-failover-policy"
+  description = "Policy for ENI failover Lambda function"
+  policy      = data.aws_iam_policy_document.eni_failover.json
+}
+
+resource "aws_iam_role_policy_attachment" "eni_failover" {
+  role       = aws_iam_role.eni_failover.name
+  policy_arn = aws_iam_policy.eni_failover.arn
 }

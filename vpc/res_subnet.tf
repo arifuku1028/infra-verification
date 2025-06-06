@@ -1,10 +1,10 @@
 ## Public Subnet
 resource "aws_subnet" "public" {
-  for_each = local.availability_zones
+  for_each = local.public_subnets
 
   vpc_id            = aws_vpc.this.id
-  cidr_block        = cidrsubnet(local.vpc_cidr, 8, each.value.index)
-  availability_zone = each.value.name
+  cidr_block        = each.value
+  availability_zone = "${local.region}${each.key}"
   tags = {
     Name = "${local.prefix}-subnet-pub-${each.key}"
   }
@@ -13,11 +13,11 @@ resource "aws_subnet" "public" {
 
 ## Private Subnet
 resource "aws_subnet" "private" {
-  for_each = local.availability_zones
+  for_each = local.private_subnets
 
   vpc_id            = aws_vpc.this.id
-  cidr_block        = cidrsubnet(local.vpc_cidr, 8, each.value.index + 10)
-  availability_zone = each.value.name
+  cidr_block        = each.value
+  availability_zone = "${local.region}${each.key}"
   tags = {
     Name = "${local.prefix}-subnet-pri-${each.key}"
   }
@@ -48,7 +48,7 @@ resource "aws_route" "public_igw" {
 
 ## Route Table for Private Subnets
 resource "aws_route_table" "private" {
-  for_each = local.availability_zones
+  for_each = local.private_subnets
 
   vpc_id = aws_vpc.this.id
   tags = {
@@ -57,8 +57,8 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  for_each = aws_subnet.private
+  for_each = local.private_subnets
 
-  subnet_id      = each.value.id
+  subnet_id      = aws_subnet.private[each.key].id
   route_table_id = aws_route_table.private[each.key].id
 }
