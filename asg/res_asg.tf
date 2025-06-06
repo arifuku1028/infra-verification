@@ -1,16 +1,16 @@
 ## Launch Template
-data "aws_ami" "al2023_arm64" {
+data "aws_ami" "al2023" {
   most_recent = true
   owners      = ["amazon"]
 
   filter {
     name   = "name"
-    values = ["al2023-ami-*-arm64"]
+    values = ["al2023-ami-*-${local.architecture}"]
   }
 
   filter {
     name   = "architecture"
-    values = ["arm64"]
+    values = ["${local.architecture}"]
   }
 
   filter {
@@ -20,17 +20,15 @@ data "aws_ami" "al2023_arm64" {
 }
 
 resource "aws_launch_template" "this" {
-  name_prefix   = "${local.prefix}-launch-template-"
+  name          = "${local.prefix}-launch-template"
   instance_type = local.instance_type
   key_name      = data.terraform_remote_state.bastion.outputs.key_pair_name
-  image_id      = data.aws_ami.al2023_arm64.id
+  image_id      = data.aws_ami.al2023.id
   vpc_security_group_ids = [
     aws_security_group.asg.id,
     data.terraform_remote_state.bastion.outputs.bastion_sg_id,
   ]
-  user_data = base64encode(templatefile("${path.module}/user_data.sh.tftpl", {
-    secondary_eni_mac = aws_network_interface.failover.mac_address
-  }))
+  user_data              = filebase64("${path.module}/user_data.sh")
   update_default_version = true
 
   tag_specifications {

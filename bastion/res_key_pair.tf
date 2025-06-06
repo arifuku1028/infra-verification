@@ -1,11 +1,16 @@
 
 resource "tls_private_key" "bastion" {
-  algorithm = "ED25519"
+  algorithm = "RSA"
+  rsa_bits  = 2048
 }
 
 resource "aws_key_pair" "bastion" {
   key_name   = "${local.prefix}-bastion-key"
   public_key = tls_private_key.bastion.public_key_openssh
+
+  tags = {
+    Name = "${local.prefix}-bastion-key"
+  }
 }
 
 resource "local_file" "public_key" {
