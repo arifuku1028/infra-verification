@@ -1,3 +1,0 @@
-# .gitignore for Lambda source code
-**/node_modules
-**/*.zip
