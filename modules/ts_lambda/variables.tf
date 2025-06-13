@@ -8,7 +8,7 @@ variable "runtime" {
   type        = string
 
   validation {
-    condition     = can(regex(var.runtime, "^nodejs\\d+\\.x$"))
+    condition     = can(regex("^nodejs\\d+\\.x$", var.runtime))
     error_message = "Invalid runtime specified. This module only supports Node.js runtimes in the format 'nodejsX.x' where X is a major version number."
   }
 }
