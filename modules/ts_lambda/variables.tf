@@ -6,6 +6,11 @@ variable "prefix" {
 variable "runtime" {
   description = "Runtime for the Lambda function (eg. 'nodejs22.x')"
   type        = string
+
+  validation {
+    condition     = can(startwith(var.runtime, "nodejs"))
+    error_message = "This module only supports Node.js runtimes."
+  }
 }
 
 variable "ts_source_path" {
