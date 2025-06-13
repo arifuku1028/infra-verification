@@ -4,12 +4,12 @@ variable "prefix" {
 }
 
 variable "runtime" {
-  description = "Runtime for the Lambda function (eg. 'nodejs22.x')\nThis module only supports Node.js runtimes."
+  description = "Runtime for the Lambda function (eg. 'nodejs22.x') [NOTE] This module only supports Node.js runtimes."
   type        = string
 
   validation {
-    condition     = startswith(var.runtime, "nodejs")
-    error_message = "This module only supports Node.js runtimes."
+    condition     = can(regex(var.runtime, "^nodejs\\d+\\.x$"))
+    error_message = "Invalid runtime specified. This module only supports Node.js runtimes in the format 'nodejsX.x' where X is a major version number."
   }
 }
 
