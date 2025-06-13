@@ -4,7 +4,7 @@ variable "prefix" {
 }
 
 variable "runtime" {
-  description = "Runtime for the Lambda function (eg. 'nodejs22.x') [NOTE] This module only supports Node.js runtimes."
+  description = "Runtime for the Lambda function (eg. 'nodejs22.x') This module only supports Node.js runtimes."
   type        = string
 
   validation {
