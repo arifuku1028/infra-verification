@@ -1,5 +1,5 @@
 resource "aws_codebuild_project" "mcp" {
-  for_each = toset(local.mcp_servers)
+  for_each = local.mcp_servers
 
   name          = "${local.prefix}-${each.key}-build-pj"
   description   = "Build and push ${each.key} image to ECR"
@@ -51,7 +51,7 @@ resource "aws_codebuild_project" "mcp" {
 }
 
 resource "aws_cloudwatch_log_group" "codebuild" {
-  for_each = toset(local.mcp_servers)
+  for_each = local.mcp_servers
 
   name              = "/aws/codebuild/${aws_codebuild_project.mcp[each.key].name}"
   retention_in_days = 30
@@ -62,7 +62,7 @@ resource "aws_cloudwatch_log_group" "codebuild" {
 }
 
 resource "terraform_data" "run_codebuild" {
-  for_each = toset(local.mcp_servers)
+  for_each = local.mcp_servers
 
   triggers_replace = {
     codebuild = aws_codebuild_project.mcp[each.key].arn
@@ -75,13 +75,13 @@ resource "terraform_data" "run_codebuild" {
 
   depends_on = [
     aws_codebuild_project.mcp,
-    aws_iam_role_policy_attachment.codebuild_ecr_push,
+    aws_iam_role_policy.codebuild_push_ecr,
     aws_iam_role_policy_attachment.codebuild_logging,
   ]
 }
 
 resource "time_sleep" "wait_build" {
-  for_each = toset(local.mcp_servers)
+  for_each = local.mcp_servers
 
   triggers = {
     codebuild = aws_codebuild_project.mcp[each.key].arn
